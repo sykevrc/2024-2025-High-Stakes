@@ -18,6 +18,8 @@ bool armpos = false;
 bool spin = false;
 bool ColorSortBlue = true;
 bool ColorSortRed;
+bool colortoggle = true;
+
 void initialize()
 {
     pros::lcd::initialize(); // initialize brain screen
@@ -37,14 +39,15 @@ void initialize()
         } });
     pros::Task([]
                {
+    if(colortoggle){
         colorsens.set_led_pwm(100);
         while (true) {
             if(ColorSortBlue == true){
-                if(fastintake.get_target_velocity() == 600 && colorsens.get_hue() > 200){
-                    Task::delay(16);
+                if(fastintake.get_actual_velocity() >=500 && colorsens.get_hue() > 200 &&colorsens.get_hue()<260){
+                    Task::delay(240);
                     fastintake.move_velocity(0);
                     Task::delay(250);
-                    fastintake.move_velocity(600);
+                    fastintake.move_voltage(10000);
                 }
             }
             else if(ColorSortRed == true){
@@ -53,12 +56,13 @@ void initialize()
                     Task::delay(16);
                     fastintake.move_velocity(0);
                     Task::delay(250);
-                    fastintake.move_velocity(600);
+                    fastintake.move_voltage(10000);
                 }
             }
             pros::lcd::print(4, "Hue: %f", colorsens.get_hue());
             Task::delay(10);
-        } });
+        } 
+    } });
 }
 
 void disabled() {}
@@ -72,9 +76,16 @@ void autonomous()
 {
     // selector.run_auton();
     // skills();
-    skills1();
+    skills();
 }
-
+void calcdistance(int side)
+{
+    int x = dist.get();
+    int theta = imu.get_yaw();
+    theta = (theta + 360) % 360;
+    theta = abs(theta - 90);
+    x = cos(theta) * x;
+}
 void opcontrol()
 {
 
@@ -127,11 +138,14 @@ void opcontrol()
         {
             doink.toggle();
         }
-
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN))
+        {
+            colortoggle = !colortoggle;
+        }
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         {
             fastintake.move_relative(-100, 600);
-            arm.move_absolute(1400, 600);
+            arm.move_absolute(1300, 600);
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2))
         {
@@ -144,7 +158,7 @@ void opcontrol()
                 }
                 else
                 {
-                    arm.move_absolute(420, 90);
+                    arm.move_absolute(270, 90);
                     armpos = false;
                 }
             }

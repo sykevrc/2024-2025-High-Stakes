@@ -4,6 +4,8 @@
 #include "pros/rotation.hpp"
 #include "lemlib/chassis/chassis.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
+#include "pros/distance.hpp"
+#include "pros/optical.hpp"
 
 using namespace pros;
 using namespace lemlib;
