@@ -19,12 +19,15 @@ bool spin = false;
 bool ColorSortBlue = true;
 bool ColorSortRed;
 bool colortoggle = true;
-
+bool dskillsmode = false;
 void initialize()
 {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();     // calibrate sensors
-
+    if (dskillsmode)
+    {
+        arm.set_zero_position(350);
+    }
     pros::Task screenTask([&]()
                           {
         while (true) {
@@ -142,6 +145,7 @@ void opcontrol()
         {
             colortoggle = !colortoggle;
         }
+        
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         {
             fastintake.move_relative(-100, 600);
@@ -158,7 +162,7 @@ void opcontrol()
                 }
                 else
                 {
-                    arm.move_absolute(270, 90);
+                    arm.move_absolute(350, 90);
                     armpos = false;
                 }
             }
