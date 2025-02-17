@@ -42,6 +42,13 @@ void initialize()
         } });
     pros::Task([]
                {
+    if((arm.get_position()>600||arm.get_position()<200)&&fastintake.get_voltage()>5000){
+        if(fastintake.get_current_draw()>5){
+            fastintake.move_voltage(-2000);
+            Task::delay(200);
+            fastintake.move_voltage(10000);
+        }
+    }
     if(colortoggle){
         colorsens.set_led_pwm(100);
         while (true) {
