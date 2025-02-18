@@ -18,7 +18,7 @@ bool armpos = false;
 bool spin = false;
 bool ColorSortBlue = true;
 bool ColorSortRed;
-bool colortoggle = true;
+bool colortoggle = false;
 bool dskillsmode = false;
 void initialize()
 {
@@ -34,16 +34,13 @@ void initialize()
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // log position telemetry
-            lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
-            // delay to save resources
+            controller.print(0,0, "Theta: %f", chassis.getPose().theta);
             pros::delay(50);
         } });
     pros::Task([]
                {
     if((arm.get_position()>600||arm.get_position()<200)&&fastintake.get_voltage()>5000){
-        if(fastintake.get_current_draw()>5){
+        if(fastintake.get_actual_velocity()<300){
             fastintake.move_voltage(-2000);
             Task::delay(200);
             fastintake.move_voltage(10000);
@@ -169,7 +166,7 @@ void opcontrol()
                 }
                 else
                 {
-                    arm.move_absolute(350, 90);
+                    arm.move_absolute(330, 90);
                     armpos = false;
                 }
             }
