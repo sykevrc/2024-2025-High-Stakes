@@ -14,19 +14,20 @@ rd::Selector selector({
 
 rd::Console console;
 
-bool armpos = false;
+bool armpos = true;
 bool spin = false;
 bool ColorSortBlue = true;
 bool ColorSortRed;
 bool colortoggle = false;
-bool dskillsmode = false;
+bool dskills = true;
 void initialize()
 {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();     // calibrate sensors
-    if (dskillsmode)
+    arm.set_encoder_units(MOTOR_ENCODER_DEGREES);
+    if (dskills)
     {
-        arm.set_zero_position(350);
+        arm.set_zero_position(-75);
     }
     pros::Task screenTask([&]()
                           {
@@ -34,24 +35,18 @@ void initialize()
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            controller.print(0,0, "Theta: %f", chassis.getPose().theta);
+            controller.print(0,0, "Debug: %f", arm.get_current_draw());
             pros::delay(50);
         } });
     pros::Task([]
                {
-    if((arm.get_position()>600||arm.get_position()<200)&&fastintake.get_voltage()>5000){
-        if(fastintake.get_actual_velocity()<300){
-            fastintake.move_voltage(-2000);
-            Task::delay(200);
-            fastintake.move_voltage(10000);
-        }
-    }
+    
     if(colortoggle){
         colorsens.set_led_pwm(100);
         while (true) {
             if(ColorSortBlue == true){
                 if(fastintake.get_actual_velocity() >=500 && colorsens.get_hue() > 200 &&colorsens.get_hue()<260){
-                    Task::delay(240);
+                    Task::delay(230);
                     fastintake.move_velocity(0);
                     Task::delay(250);
                     fastintake.move_voltage(10000);
@@ -60,7 +55,7 @@ void initialize()
             else if(ColorSortRed == true){
                 printf("%s", "Color Sorting Red");
                 if(fastintake.get_target_velocity() == 600 && colorsens.get_hue() < 8){
-                    Task::delay(16);
+                    Task::delay(230);
                     fastintake.move_velocity(0);
                     Task::delay(250);
                     fastintake.move_voltage(10000);
@@ -69,6 +64,8 @@ void initialize()
             pros::lcd::print(4, "Hue: %f", colorsens.get_hue());
             Task::delay(10);
         } 
+    } else{
+        colorsens.set_led_pwm(0);
     } });
 }
 
@@ -85,14 +82,7 @@ void autonomous()
     // skills();
     skills();
 }
-void calcdistance(int side)
-{
-    int x = dist.get();
-    int theta = imu.get_yaw();
-    theta = (theta + 360) % 360;
-    theta = abs(theta - 90);
-    x = cos(theta) * x;
-}
+
 void opcontrol()
 {
 
@@ -139,7 +129,7 @@ void opcontrol()
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT))
         {
-            arm.move_absolute(1600, 200);
+            arm.move_absolute(600, 200);
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B))
         {
@@ -149,11 +139,10 @@ void opcontrol()
         {
             colortoggle = !colortoggle;
         }
-        
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
         {
             fastintake.move_relative(-100, 600);
-            arm.move_absolute(1300, 600);
+            arm.move_absolute(500, 600);
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2))
         {
@@ -161,18 +150,18 @@ void opcontrol()
             {
                 if (arm.get_position() > 170)
                 {
-                    arm.move_absolute(0, 200);
+                    arm.move_absolute(75, 200);
                     armpos = false;
                 }
                 else
                 {
-                    arm.move_absolute(330, 90);
+                    arm.move_absolute(0, 200);
                     armpos = false;
                 }
             }
             else
             {
-                arm.move_absolute(0, 200);
+                arm.move_absolute(70, 200);
                 armpos = true;
             }
         }
