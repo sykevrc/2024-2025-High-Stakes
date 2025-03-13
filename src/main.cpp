@@ -1,6 +1,34 @@
 #include "main.h"
 #include "robodash/api.h"
+using namespace pros;
+using namespace lemlib;
 
+extern Controller controller;
+
+extern MotorGroup leftMotors;
+extern MotorGroup rightMotors;
+
+extern Motor intake;
+extern Motor fastintake;
+
+extern Motor arm;
+extern Imu imu;
+
+
+extern adi::Pneumatics clamp;
+extern adi::Pneumatics doink;
+
+extern Rotation verticalEnc;
+extern Rotation horizontalEnc;
+
+extern Drivetrain drivetrain;
+
+extern TrackingWheel horizontal;
+extern TrackingWheel vertical;
+
+extern Chassis chassis;
+extern Optical colorsens;
+extern Distance dist;
 rd::Selector selector({
     {"Red Solo Winpoint", &redSoloWP},
     {"Blue Solo Winpoint", &blueSoloWP},
@@ -35,7 +63,6 @@ void initialize()
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            controller.print(0,0, "Debug: %f", arm.get_current_draw());
             pros::delay(50);
         } });
     pros::Task([]
@@ -67,6 +94,17 @@ void initialize()
     } else{
         colorsens.set_led_pwm(0);
     } });
+    // pros::Task([]
+    //     {
+    //     while(true){
+    //         if(fastintake.get_actual_velocity()==0&&(arm.get_position()<60||arm.get_position()>80)&&spin){
+    //             fastintake.move_voltage(-2000);
+    //             Task::delay(300);
+    //             fastintake.move_voltage(10000);
+    //         }
+    //     }
+    // }
+    // );
 }
 
 void disabled() {}
@@ -80,6 +118,7 @@ void autonomous()
 {
     // selector.run_auton();
     // skills();
+    spin = true;
     skills();
 }
 
