@@ -172,11 +172,10 @@ void lemlib::update() {
     odomPose.x += localX * -cos(avgHeading);
     odomPose.y += localX * sin(avgHeading);
     odomPose.theta = heading;
-
     //filter with distance sensor
     if (!(abs(odomPose.x)<36&&abs(odomPose.y<36))&&distRaw<1000){
         float d_angle = fmod(fmod(avgHeading-90, 360)+360, 360);
-        controller.print(0,0, "Debug: %f", distRaw);
+        
         if (odomPose.x>36 && d_angle>70 && d_angle<110){
             odomPose.x = 71.5-sin(degToRad(d_angle))*distRaw;
         }else if(odomPose.x<-36 && d_angle>250 && d_angle<290){

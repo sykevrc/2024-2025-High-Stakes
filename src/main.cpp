@@ -63,6 +63,9 @@ void initialize()
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            pros::lcd::print(2, "T: %f", chassis.getPose().theta); // y
+            pros::lcd::print(3, "D: %f", dist.get_distance()); // y
+
             pros::delay(50);
         } });
     pros::Task([]
