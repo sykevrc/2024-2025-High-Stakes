@@ -1,34 +1,6 @@
 #include "main.h"
 #include "robodash/api.h"
-using namespace pros;
-using namespace lemlib;
 
-extern Controller controller;
-
-extern MotorGroup leftMotors;
-extern MotorGroup rightMotors;
-
-extern Motor intake;
-extern Motor fastintake;
-
-extern Motor arm;
-extern Imu imu;
-
-
-extern adi::Pneumatics clamp;
-extern adi::Pneumatics doink;
-
-extern Rotation verticalEnc;
-extern Rotation horizontalEnc;
-
-extern Drivetrain drivetrain;
-
-extern TrackingWheel horizontal;
-extern TrackingWheel vertical;
-
-extern Chassis chassis;
-extern Optical colorsens;
-extern Distance dist;
 rd::Selector selector({
     {"Red Solo Winpoint", &redSoloWP},
     {"Blue Solo Winpoint", &blueSoloWP},
@@ -44,16 +16,17 @@ rd::Console console;
 
 bool armpos = true;
 bool spin = false;
+
 bool ColorSortBlue = true;
-bool ColorSortRed;
-bool colortoggle = false;
-bool dskills = true;
+bool colortoggle = true;
+bool a = false;
+
 void initialize()
 {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();     // calibrate sensors
-    arm.set_encoder_units(MOTOR_ENCODER_DEGREES);
-    if (dskills)
+    arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
+    if (a)
     {
         arm.set_zero_position(-75);
     }
@@ -63,9 +36,9 @@ void initialize()
             // print robot location to the brain screen
             pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(2, "T: %f", chassis.getPose().theta); // y
-            pros::lcd::print(3, "D: %f", dist.get_distance()); // y
+            pros::lcd::print(3, "Theta: %f", chassis.getPose().theta); // y
 
+            //controller.print(0,0, "Debug: %f", dist.get_distance());
             pros::delay(50);
         } });
     pros::Task([]
@@ -76,16 +49,16 @@ void initialize()
         while (true) {
             if(ColorSortBlue == true){
                 if(fastintake.get_actual_velocity() >=500 && colorsens.get_hue() > 200 &&colorsens.get_hue()<260){
-                    Task::delay(230);
+                    Task::delay(228);
                     fastintake.move_velocity(0);
                     Task::delay(250);
                     fastintake.move_voltage(10000);
                 }
             }
-            else if(ColorSortRed == true){
+            else{
                 printf("%s", "Color Sorting Red");
                 if(fastintake.get_target_velocity() == 600 && colorsens.get_hue() < 8){
-                    Task::delay(230);
+                    Task::delay(228);
                     fastintake.move_velocity(0);
                     Task::delay(250);
                     fastintake.move_voltage(10000);
@@ -97,17 +70,15 @@ void initialize()
     } else{
         colorsens.set_led_pwm(0);
     } });
-    // pros::Task([]
-    //     {
-    //     while(true){
-    //         if(fastintake.get_actual_velocity()==0&&(arm.get_position()<60||arm.get_position()>80)&&spin){
-    //             fastintake.move_voltage(-2000);
-    //             Task::delay(300);
-    //             fastintake.move_voltage(10000);
-    //         }
-    //     }
-    // }
-    // );
+    pros::Task([]
+               {
+        while(a){
+            if(fastintake.get_actual_velocity()==0&&(arm.get_position()<60||arm.get_position()>80)){
+                fastintake.move_voltage(-2000);
+                Task::delay(300);
+                fastintake.move_voltage(10000);
+            }
+        } });
 }
 
 void disabled() {}
@@ -121,7 +92,6 @@ void autonomous()
 {
     // selector.run_auton();
     // skills();
-    spin = true;
     skills();
 }
 
@@ -135,7 +105,7 @@ void opcontrol()
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         int intaketest = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1))
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) // intake
         {
             spin = !spin;
             if (spin)
@@ -150,7 +120,7 @@ void opcontrol()
             }
         }
 
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y))
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) // l2 outtake
         {
             spin = !spin;
             if (spin)
@@ -165,28 +135,32 @@ void opcontrol()
             }
         }
 
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1))
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) // clamp
         {
             clamp.toggle();
         }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT))
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) // l1 alliance stake
         {
             arm.move_absolute(600, 200);
         }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B))
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) // r2 tip
+        {
+            arm.move_absolute(700, 200);
+        }
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) // thumb doink
         {
             doink.toggle();
         }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN))
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) // r1 go under ladder
         {
-            colortoggle = !colortoggle;
+            arm.move_absolute(0, 200);
         }
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) // wall stake
         {
             fastintake.move_relative(-100, 600);
-            arm.move_absolute(500, 600);
+            arm.move_absolute(450, 600);
         }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2))
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) // loading
         {
             if (armpos)
             {
@@ -197,13 +171,13 @@ void opcontrol()
                 }
                 else
                 {
-                    arm.move_absolute(0, 200);
+                    arm.move_absolute(350, 200);
                     armpos = false;
                 }
             }
             else
             {
-                arm.move_absolute(70, 200);
+                arm.move_absolute(75, 200);
                 armpos = true;
             }
         }

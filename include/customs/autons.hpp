@@ -1,3 +1,5 @@
+
+
 void redSoloWP();
 void blueSoloWP();
 void elimRed();
