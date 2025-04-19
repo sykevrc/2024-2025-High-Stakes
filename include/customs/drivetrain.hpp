@@ -24,6 +24,7 @@ extern Imu imu;
 
 extern adi::Pneumatics clamp;
 extern adi::Pneumatics doink;
+extern adi::AnalogIn line;
 
 extern Rotation verticalEnc;
 extern Rotation horizontalEnc;

@@ -49,7 +49,10 @@ void initialize()
         while (true) {
             if(ColorSortBlue == true){
                 if(fastintake.get_actual_velocity() >=500 && colorsens.get_hue() > 200 &&colorsens.get_hue()<260){
-                    Task::delay(228);
+                    while (line.get_value()>2700){
+                        fastintake.move_voltage(10000);
+                    }
+                    Task::delay(50);
                     fastintake.move_velocity(0);
                     Task::delay(250);
                     fastintake.move_voltage(10000);
@@ -70,15 +73,7 @@ void initialize()
     } else{
         colorsens.set_led_pwm(0);
     } });
-    pros::Task([]
-               {
-        while(a){
-            if(fastintake.get_actual_velocity()==0&&(arm.get_position()<60||arm.get_position()>80)){
-                fastintake.move_voltage(-2000);
-                Task::delay(300);
-                fastintake.move_voltage(10000);
-            }
-        } });
+    
 }
 
 void disabled() {}

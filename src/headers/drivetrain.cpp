@@ -34,7 +34,7 @@ lemlib::TrackingWheel horizontal(&horizontalEnc, 2, -6);
 lemlib::TrackingWheel vertical(&verticalEnc, -2.02, -3.75);
 adi::Pneumatics clamp(1, false);
 adi::Pneumatics doink(2, false);
-
+adi::AnalogIn line(8);
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&leftMotors,              // left motor group
                               &rightMotors,             // right motor group
