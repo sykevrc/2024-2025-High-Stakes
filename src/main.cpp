@@ -1,14 +1,13 @@
 #include "main.h"
 #include "robodash/api.h"
-
 rd::Selector selector({
-    {"Red Solo Winpoint", &redSoloWP},
-    {"Blue Solo Winpoint", &blueSoloWP},
-    {"Red 9 pt", &redRush},
-    {"Blue 9 pt", &blueRush},
     {"Skills", &skills},
-    {"Red Elim", &elimRed},
-    {"Blue Elim", &elimBlue},
+    {"Red WP", &RWP},
+    {"Blue WP", &BWP},
+    {"Red L", &RLE},
+    {"Red R", &RRE},
+    {"Blue L", &BLE},
+    {"Blue R", &BRE},
 
 });
 
@@ -19,17 +18,13 @@ bool spin = false;
 
 bool ColorSortBlue = true;
 bool colortoggle = true;
-bool a = false;
 
 void initialize()
 {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();     // calibrate sensors
     arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
-    if (a)
-    {
-        arm.set_zero_position(-75);
-    }
+    
     pros::Task screenTask([&]()
                           {
         while (true) {
@@ -41,38 +36,7 @@ void initialize()
             //controller.print(0,0, "Debug: %f", dist.get_distance());
             pros::delay(50);
         } });
-    pros::Task([]
-               {
     
-    if(colortoggle){
-        colorsens.set_led_pwm(100);
-        while (true) {
-            if(ColorSortBlue == true){
-                if(fastintake.get_actual_velocity() >=500 && colorsens.get_hue() > 200 &&colorsens.get_hue()<260){
-                    while (line.get_value()>2700){
-                        fastintake.move_voltage(10000);
-                    }
-                    Task::delay(50);
-                    fastintake.move_velocity(0);
-                    Task::delay(250);
-                    fastintake.move_voltage(10000);
-                }
-            }
-            else{
-                printf("%s", "Color Sorting Red");
-                if(fastintake.get_target_velocity() == 600 && colorsens.get_hue() < 8){
-                    Task::delay(228);
-                    fastintake.move_velocity(0);
-                    Task::delay(250);
-                    fastintake.move_voltage(10000);
-                }
-            }
-            pros::lcd::print(4, "Hue: %f", colorsens.get_hue());
-            Task::delay(10);
-        } 
-    } else{
-        colorsens.set_led_pwm(0);
-    } });
     
 }
 
@@ -87,7 +51,7 @@ void autonomous()
 {
     // selector.run_auton();
     // skills();
-    skills();
+    RLE();
 }
 
 void opcontrol()
