@@ -354,11 +354,11 @@ void BWP() {
     chassis.setPose(58.42, 13.56, 135.64);
     fastintake.tare_position();
     arm.set_zero_position(-75);
-    chassis.moveToPose(59, 8, 135, 700, {.minSpeed = 30});
+    chassis.moveToPose(59, 7, 132, 700, {.minSpeed = 30});
     delay(60);
     arm.move_absolute(600, 200);
     delay(300);
-    chassis.moveToPoint(24, 26, 1200, {.forwards = false,.maxSpeed=90, .minSpeed = 30});
+    chassis.moveToPoint(24, 27, 1200, {.forwards = false,.maxSpeed=90, .minSpeed = 30});
     arm.move_absolute(300, 100);
     chassis.waitUntilDone();
     clamp.toggle();

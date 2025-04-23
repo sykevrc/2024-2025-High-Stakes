@@ -21,37 +21,56 @@ bool colortoggle = true;
 
 void initialize()
 {
-    pros::lcd::initialize(); // initialize brain screen
+    if (selector.get_auton() == std::nullopt)
+    { // driver skills
+        pros::Task([]
+                   {
+        colorsens.set_led_pwm(100);
+        
+        while (true) {
+                if(fastintake.get_actual_velocity() >=500 && colorsens.get_hue() > 200 &&colorsens.get_hue()<260){
+                    while (line.get_value()>2700){
+                        fastintake.move_voltage(10000);
+                    }
+                    Task::delay(75);
+                    fastintake.move_velocity(0);
+                    Task::delay(250);
+                    fastintake.move_voltage(10000);
+                }
+            Task::delay(10);
+    } });
+        arm.set_zero_position(-75);
+    }
+    arm.tare_position();
+    //pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate();     // calibrate sensors
     arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
-    
-    pros::Task screenTask([&]()
-                          {
-        while (true) {
-            // print robot location to the brain screen
-            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(3, "Theta: %f", chassis.getPose().theta); // y
 
-            //controller.print(0,0, "Debug: %f", dist.get_distance());
-            pros::delay(50);
-        } });
-    
-    
+    // pros::Task screenTask([&]()
+    //                       {
+    //     while (true) {
+    //         // print robot location to the brain screen
+    //         pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+    //         pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+    //         pros::lcd::print(3, "Theta: %f", chassis.getPose().theta); // y
+
+    //         //controller.print(0,0, "Debug: %f", dist.get_distance());
+    //         pros::delay(50);
+    //     } });
 }
 
 void disabled() {}
 
 void competition_initialize()
 {
-    // selector.focus();
+    selector.focus();
 }
 
 void autonomous()
 {
-    // selector.run_auton();
+    selector.run_auton();
     // skills();
-    RLE();
+    //RLE();
 }
 
 void opcontrol()
@@ -101,6 +120,7 @@ void opcontrol()
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) // l1 alliance stake
         {
             arm.move_absolute(600, 200);
+            armpos = true;
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) // r2 tip
         {
@@ -123,14 +143,14 @@ void opcontrol()
         {
             if (armpos)
             {
-                if (arm.get_position() > 170)
+                if (arm.get_position() > 170&&arm.get_position()<550)
                 {
                     arm.move_absolute(75, 200);
                     armpos = false;
                 }
-                else
+                else 
                 {
-                    arm.move_absolute(350, 200);
+                    arm.move_absolute(300, 200);
                     armpos = false;
                 }
             }
