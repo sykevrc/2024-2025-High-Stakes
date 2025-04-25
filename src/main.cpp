@@ -22,28 +22,33 @@ bool colortoggle = true;
 void initialize()
 {
     if (selector.get_auton() == std::nullopt)
-    { // driver skills
-        pros::Task([]
-                   {
-        colorsens.set_led_pwm(100);
-        
-        while (true) {
-                if(fastintake.get_actual_velocity() >=500 && colorsens.get_hue() > 200 &&colorsens.get_hue()<260){
-                    while (line.get_value()>2700){
-                        fastintake.move_voltage(10000);
-                    }
-                    Task::delay(75);
-                    fastintake.move_velocity(0);
-                    Task::delay(250);
-                    fastintake.move_voltage(10000);
-                }
-            Task::delay(10);
-    } });
+    {
         arm.set_zero_position(-75);
     }
-    arm.tare_position();
-    //pros::lcd::initialize(); // initialize brain screen
-    chassis.calibrate();     // calibrate sensors
+    pros::Task([]
+               {
+
+        if(selector.get_auton() == std::nullopt)
+        {
+            colorsens.set_led_pwm(100);
+            if (fastintake.get_actual_velocity() >= 500 && colorsens.get_hue() > 200 && colorsens.get_hue() < 260)
+            {
+                while (line.get_value() > 2700)
+                {
+                    fastintake.move_voltage(10000);
+                }
+                delay(75);
+                fastintake.move_velocity(0);
+                delay(250);
+                fastintake.move_voltage(10000);
+            }
+            delay(10);
+        }else{
+            colorsens.set_led_pwm(0);
+            arm.tare_position();
+        } });
+    // pros::lcd::initialize(); // initialize brain screen
+    chassis.calibrate(); // calibrate sensors
     arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
 
     // pros::Task screenTask([&]()
@@ -70,7 +75,7 @@ void autonomous()
 {
     selector.run_auton();
     // skills();
-    //RLE();
+    // RLE();
 }
 
 void opcontrol()
@@ -143,12 +148,12 @@ void opcontrol()
         {
             if (armpos)
             {
-                if (arm.get_position() > 170&&arm.get_position()<550)
+                if (arm.get_position() > 170 && arm.get_position() < 550)
                 {
                     arm.move_absolute(75, 200);
                     armpos = false;
                 }
-                else 
+                else
                 {
                     arm.move_absolute(300, 200);
                     armpos = false;

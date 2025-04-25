@@ -4,7 +4,8 @@
 #include "pros/rtos.hpp"
 void RLE()
 {
-    pros::Task([]{
+    pros::Task([]
+               {
         colorsens.set_led_pwm(100);
         
         while (true) {
@@ -18,32 +19,45 @@ void RLE()
                     fastintake.move_voltage(10000);
                 }
             Task::delay(10);
-    }});
-    chassis.setPose(-49,32,73.12);
-    arm.move_absolute(300,200);
+    } });
+    chassis.setPose(-49, 32, 73.12);
+    arm.tare_position();
+    arm.move_absolute(300, 200);
+    chassis.moveToPoint(-24, 44, 800, {.minSpeed = 20});
     intake.move_voltage(12000);
-    chassis.moveToPoint(-24,44,1400,{.minSpeed=50});
-    delay(500);
-    chassis.turnToHeading(0,600);
-    chassis.moveToPoint(-23,25,900,{.forwards=false});
+    chassis.turnToHeading(0, 600);
+    chassis.moveToPoint(-24, 25, 800, {.forwards = false});
     chassis.waitUntilDone();
     clamp.toggle();
     fastintake.move_voltage(10000);
-    chassis.turnToHeading(45,400);
-    chassis.moveToPoint(-18,45,1700,{.minSpeed=50});
+    chassis.moveToPoint(-22, 44, 900, {.minSpeed = 20});
+    chassis.turnToHeading(90, 700, {.maxSpeed = 70});
+    chassis.moveToPose(-5, 44, 90, 1200,{.minSpeed=40});
     doink.toggle();
-    chassis.turnToHeading(90,700);
-    chassis.moveToPoint(-8,46,800);
-    delay(500);
-    
-    chassis.moveToPoint(-29,53,1400,{.forwards=false,.minSpeed=50});
-    chassis.turnToHeading(300,900,{.maxSpeed=70});
-    chassis.turnToHeading(280,200);
+    // chassis.turnToHeading(90,700);
+    // chassis.moveToPoint(-8,46,800);
+    // delay(500);
+
+    chassis.moveToPoint(-29, 53, 1000, {.forwards = false, .minSpeed = 50});
+    chassis.turnToHeading(300, 900, {.maxSpeed = 70});
+    chassis.turnToHeading(280, 200);
     doink.toggle();
-    chassis.moveToPoint(-56,64,1000);
+    chassis.moveToPoint(-62.5, 59, 600);
+    chassis.turnToHeading(-40, 600);
+    chassis.turnToHeading(40, 800,{.maxSpeed=60});
+    doink.toggle();
+    chassis.turnToHeading(-35, 800,{.maxSpeed=70});
+    doink.toggle();
+    chassis.moveToPoint(-63, 64, 700);
+    chassis.moveToPoint(-63, 59, 600,{.forwards=false});
+    chassis.moveToPoint(-63, 64, 700);
+
+    chassis.turnToHeading(90, 600);
+    chassis.moveToPoint(-30, 65, 900);
+    /*
     doink.toggle();
     chassis.moveToPose(-56,59,400,1300,{.forwards=false, .minSpeed=30});
-    
+
     /**/
 }
 void RRE()
@@ -279,7 +293,8 @@ void skills()
 
 void RWP()
 {
-    pros::Task([]{
+    pros::Task([]
+               {
         colorsens.set_led_pwm(100);
         
         while (true) {
@@ -293,7 +308,7 @@ void RWP()
                     fastintake.move_voltage(10000);
                 }
             Task::delay(10);
-    }});
+    } });
     chassis.setPose(-58.42, 13.56, 225.64);
     fastintake.tare_position();
     arm.set_zero_position(-75);
@@ -301,7 +316,7 @@ void RWP()
     delay(60);
     arm.move_absolute(600, 200);
     delay(300);
-    chassis.moveToPoint(-24, 26, 1200, {.forwards = false,.maxSpeed=90, .minSpeed = 30});
+    chassis.moveToPoint(-24, 26, 1200, {.forwards = false, .maxSpeed = 90, .minSpeed = 30});
     arm.move_absolute(300, 100);
     chassis.waitUntilDone();
     clamp.toggle();
@@ -322,21 +337,23 @@ void RWP()
     chassis.moveToPoint(-49, -27, 1000, {.maxSpeed = 90});
     clamp.toggle();
     chassis.turnToHeading(-90, 600, {.maxSpeed = 60});
-    fastintake.move_relative(600,600);
+    fastintake.move_relative(600, 600);
     chassis.moveToPoint(-24, -26, 900, {.forwards = false});
     chassis.waitUntilDone();
     clamp.toggle();
     delay(50);
     fastintake.move_voltage(10000);
-    chassis.moveToPoint(-24, -55, 1100,{.minSpeed=50});
+    chassis.moveToPoint(-24, -55, 1100, {.minSpeed = 50});
     fastintake.move_voltage(10000);
     chassis.turnToHeading(30, 700);
-    chassis.moveToPoint(-20, -23, 1000,{.maxSpeed=80});
+    chassis.moveToPoint(-20, -23, 1000, {.maxSpeed = 80});
     chassis.waitUntilDone();
     arm.move_relative(150, 200);
 };
-void BWP() {
-    pros::Task([]{
+void BWP()
+{
+    pros::Task([]
+               {
         colorsens.set_led_pwm(100);
         
         while (true) {
@@ -350,7 +367,7 @@ void BWP() {
                     fastintake.move_voltage(10000);
                 }
             Task::delay(10);
-    }});
+    } });
     chassis.setPose(58.42, 13.56, 135.64);
     fastintake.tare_position();
     arm.set_zero_position(-75);
@@ -358,7 +375,7 @@ void BWP() {
     delay(60);
     arm.move_absolute(600, 200);
     delay(300);
-    chassis.moveToPoint(24, 27, 1200, {.forwards = false,.maxSpeed=90, .minSpeed = 30});
+    chassis.moveToPoint(24, 27, 1200, {.forwards = false, .maxSpeed = 90, .minSpeed = 30});
     arm.move_absolute(300, 100);
     chassis.waitUntilDone();
     clamp.toggle();
@@ -368,7 +385,7 @@ void BWP() {
     intake.move_voltage(12000);
     chassis.moveToPoint(24, 46, 600);
     chassis.turnToHeading(270, 600, {.maxSpeed = 70});
-    
+
     chassis.moveToPoint(8.5, 45, 1100, {.earlyExitRange = 2});
     chassis.moveToPoint(49, 17, 1600, {.forwards = false, .minSpeed = 10});
     chassis.turnToHeading(180, 700, {.maxSpeed = 70, .minSpeed = 30});
@@ -380,16 +397,16 @@ void BWP() {
     chassis.moveToPoint(49, -27, 1000, {.maxSpeed = 90});
     clamp.toggle();
     chassis.turnToHeading(90, 600, {.maxSpeed = 60});
-    fastintake.move_relative(600,600);
+    fastintake.move_relative(600, 600);
     chassis.moveToPoint(24, -26, 900, {.forwards = false});
     chassis.waitUntilDone();
     clamp.toggle();
     delay(50);
     fastintake.move_voltage(10000);
-    chassis.moveToPoint(24, -55, 1100,{.minSpeed=50});
+    chassis.moveToPoint(24, -55, 1100, {.minSpeed = 50});
     fastintake.move_voltage(10000);
     chassis.turnToHeading(-30, 700);
-    chassis.moveToPoint(20, -23, 1000,{.maxSpeed=80});
+    chassis.moveToPoint(20, -23, 1000, {.maxSpeed = 80});
     chassis.waitUntilDone();
     arm.move_relative(150, 200);
 };
