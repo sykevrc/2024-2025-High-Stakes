@@ -3,11 +3,11 @@
 rd::Selector selector({
     {"Skills", &skills},
     {"Red WP", &RWP},
-    {"Blue WP", &BWP},
-    {"Red L", &RLE},
-    {"Red R", &RRE},
-    {"Blue L", &BLE},
-    {"Blue R", &BRE},
+    {"BlueWP", &BWP},
+    {"RdLeft", &RLE},
+    {"RRight", &RRE},
+    {"BlLeft", &BLE},
+    {"BRight", &BRE},
 
 });
 
@@ -18,16 +18,16 @@ bool spin = false;
 
 bool ColorSortBlue = true;
 bool colortoggle = true;
-
+void next(){
+    selector.next_auton();
+}
 void initialize()
 {
-    if (selector.get_auton() == std::nullopt)
-    {
-        arm.set_zero_position(-75);
-    }
+    arm.tare_position();
+
     pros::Task([]
                {
-
+        
         if(selector.get_auton() == std::nullopt)
         {
             colorsens.set_led_pwm(100);
@@ -50,6 +50,7 @@ void initialize()
     // pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
     arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
+    arm.set_zero_position(-75);
 
     // pros::Task screenTask([&]()
     //                       {
@@ -61,14 +62,29 @@ void initialize()
 
     //         //controller.print(0,0, "Debug: %f", dist.get_distance());
     //         pros::delay(50);
-    //     } });
+    //     } });.
+    pros::screen::touch_callback(next, TOUCH_PRESSED);
+    
+    selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
+		if (routine == std::nullopt) {
+			//std::cout << "No routine selected" << std::endl;
+		} else {
+			//std::cout << "Selected Routine: " << routine.value().name << std::endl;
+            controller.print(0,0, "Auto: %s", routine.value().name);
+            //controller.rumble(".-.");
+		}
+	});
 }
 
-void disabled() {}
+void disabled()
+{
+    
+}
 
 void competition_initialize()
 {
     selector.focus();
+    
 }
 
 void autonomous()
@@ -87,7 +103,7 @@ void opcontrol()
         // get joystick positions
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         int rightX = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        int intaketest = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
+        // int intaketest = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) // intake
         {
             spin = !spin;
