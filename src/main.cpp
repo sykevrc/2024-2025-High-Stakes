@@ -18,18 +18,16 @@ bool spin = false;
 
 bool ColorSortBlue = true;
 bool colortoggle = true;
-void next(){
+void next()
+{
     selector.next_auton();
 }
 void initialize()
 {
     arm.tare_position();
-
-    pros::Task([]
-               {
-        
-        if(selector.get_auton() == std::nullopt)
-        {
+    pros::Task([]{
+        std::optional<rd::Selector::routine_t> current_routine = selector.get_auton();
+        if(current_routine == std::nullopt){
             colorsens.set_led_pwm(100);
             if (fastintake.get_actual_velocity() >= 500 && colorsens.get_hue() > 200 && colorsens.get_hue() < 260)
             {
@@ -45,7 +43,7 @@ void initialize()
             delay(10);
         }else{
             colorsens.set_led_pwm(0);
-            arm.tare_position();
+            //arm.tare_position();
         } });
     // pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
@@ -64,34 +62,32 @@ void initialize()
     //         pros::delay(50);
     //     } });.
     pros::screen::touch_callback(next, TOUCH_PRESSED);
-    
-    selector.on_select([](std::optional<rd::Selector::routine_t> routine) {
+
+    selector.on_select([](std::optional<rd::Selector::routine_t> routine)
+                       {
 		if (routine == std::nullopt) {
 			//std::cout << "No routine selected" << std::endl;
 		} else {
 			//std::cout << "Selected Routine: " << routine.value().name << std::endl;
             controller.print(0,0, "Auto: %s", routine.value().name);
             //controller.rumble(".-.");
-		}
-	});
+		} });
 }
 
 void disabled()
 {
-    
 }
 
 void competition_initialize()
 {
     selector.focus();
-    
 }
 
 void autonomous()
 {
     selector.run_auton();
     // skills();
-    // RLE();
+     //BLE();
 }
 
 void opcontrol()
@@ -159,6 +155,19 @@ void opcontrol()
         {
             fastintake.move_relative(-100, 600);
             arm.move_absolute(450, 600);
+        }
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) // move up
+        {
+            arm.move_relative(10, 600);
+        }
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) // move down
+        {
+            arm.move_relative(-10, 600);
+        }
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)) // tare arm
+        {
+            arm.tare_position();
+            arm.set_zero_position(-75);
         }
         if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) // loading
         {
