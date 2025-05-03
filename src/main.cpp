@@ -27,6 +27,7 @@ void initialize()
     arm.tare_position();
     pros::Task([]{
         std::optional<rd::Selector::routine_t> current_routine = selector.get_auton();
+        while(true){
         if(current_routine == std::nullopt){
             colorsens.set_led_pwm(100);
             if (fastintake.get_actual_velocity() >= 500 && colorsens.get_hue() > 200 && colorsens.get_hue() < 260)
@@ -44,7 +45,7 @@ void initialize()
         }else{
             colorsens.set_led_pwm(0);
             //arm.tare_position();
-        } });
+        } }});
     // pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
     arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
@@ -115,7 +116,7 @@ void opcontrol()
             }
         }
 
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) // l2 outtake
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) // R1 outtake
         {
             spin = !spin;
             if (spin)
@@ -147,7 +148,7 @@ void opcontrol()
         {
             doink.toggle();
         }
-        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) // r1 go under ladder
+        if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) // L2 go under ladder
         {
             arm.move_absolute(0, 200);
         }
@@ -155,6 +156,8 @@ void opcontrol()
         {
             fastintake.move_relative(-100, 600);
             arm.move_absolute(450, 600);
+            delay(250);
+            fastintake.move_voltage(10000);
         }
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) // move up
         {
