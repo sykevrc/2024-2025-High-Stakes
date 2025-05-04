@@ -392,23 +392,26 @@ void skills()
     arm.move_absolute(300, 200);
     fastintake.move_voltage(10000);
     chassis.turnToHeading(-45, 800, {.maxSpeed = 60, .minSpeed = 10});
-    chassis.moveToPoint(24, 24, 1200, {.maxSpeed = 90, .minSpeed = 10});
-    chassis.moveToPoint(24, 50, 1200, {.maxSpeed = 90, .minSpeed = 10});
-    chassis.turnToHeading(100, 800, {.maxSpeed = 90, .minSpeed = 10});
-    chassis.moveToPoint(48, 45, 900);
-    delay(500);
-    chassis.moveToPoint(62, 48, 1000);
-    chassis.turnToHeading(135, 800, {.minSpeed = 10});
-    chassis.moveToPoint(60, 60, 900, {.forwards = false});
-    chassis.waitUntilDone();
-    fastintake.move_relative(-700, 600);
-    clamp.toggle();
-    chassis.moveToPoint(56, 56, 400);
-    chassis.moveToPoint(60, 60, 500, {.forwards = false});
 
+
+    chassis.moveToPoint(24, 24, 1000, {.maxSpeed = 90, .minSpeed = 30});
+    chassis.moveToPoint(24, 52, 700, {.maxSpeed = 90, .minSpeed = 10});
+    chassis.turnToHeading(100, 800, {.maxSpeed = 90, .minSpeed = 10});
+    chassis.moveToPoint(48, 46, 900,{.maxSpeed=80});
+    chassis.moveToPoint(64, 48, 1000,{.maxSpeed=70});
+    //delay(500);
+    chassis.turnToHeading(180, 800, {.minSpeed = 10});
+    delay(500);
+    chassis.waitUntilDone();
+    clamp.toggle();
     fastintake.move_relative(-700, 600);
+    
+    chassis.moveToPoint(64, 64, 800, {.forwards = false});
+    chassis.moveToPoint(56, 56, 500, {.minSpeed=50});
+    
+    //fastintake.move_relative(-700, 600);
     intake.move_voltage(-2000);
-    chassis.moveToPoint(40, 25, 1000, {.minSpeed = 60, .earlyExitRange = 4});
+    chassis.moveToPoint(44, 25, 1000, {.minSpeed = 60, .earlyExitRange = 4});
     fastintake.move_voltage(5000);
     chassis.moveToPoint(54, -3, 1000, {.minSpeed = 60, .earlyExitRange = 9});
 
