@@ -31,7 +31,7 @@ Rotation verticalEnc(2);
 // horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
 lemlib::TrackingWheel horizontal(&horizontalEnc, 2, -6);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
-lemlib::TrackingWheel vertical(&verticalEnc, -2.02, -3.75);
+lemlib::TrackingWheel vertical(&verticalEnc, -2.02, -3.5);
 adi::Pneumatics clamp(1, false);
 adi::Pneumatics doink(2, false);
 adi::AnalogIn line(8);
