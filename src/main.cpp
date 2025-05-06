@@ -25,9 +25,11 @@ void next()
 void initialize()
 {
     arm.tare_position();
-    pros::Task([]{
-        std::optional<rd::Selector::routine_t> current_routine = selector.get_auton();
+    pros::Task([]
+               {
         while(true){
+        std::optional<rd::Selector::routine_t> current_routine = selector.get_auton();
+
         if(current_routine == std::nullopt){
             colorsens.set_led_pwm(100);
             if (fastintake.get_actual_velocity() >= 500 && colorsens.get_hue() > 200 && colorsens.get_hue() < 260)
@@ -42,10 +44,9 @@ void initialize()
                 fastintake.move_voltage(10000);
             }
             delay(10);
-        }else{
-            colorsens.set_led_pwm(0);
-            //arm.tare_position();
-        } }});
+        }
+        pros::delay(50);
+    } });
     // pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
     arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
@@ -88,7 +89,7 @@ void autonomous()
 {
     selector.run_auton();
     // skills();
-     //BLE();
+    // BLE();
 }
 
 void opcontrol()
