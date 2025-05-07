@@ -47,23 +47,22 @@ void initialize()
         }
         pros::delay(50);
     } });
-    pros::lcd::initialize(); // initialize brain screen
+    // pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
     arm.set_encoder_units(E_MOTOR_ENCODER_DEGREES);
     arm.set_zero_position(-75);
 
-    pros::Task screenTask([&]()
-                          {
-        while (true) {
-            // print robot location to the brain screen
-            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(3, "Theta: %f", chassis.getPose().theta); // y
+    // pros::Task screenTask([&]()
+    //                       {
+    //     while (true) {
+    //         // print robot location to the brain screen
+    //         pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+    //         pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+    //         pros::lcd::print(3, "Theta: %f", chassis.getPose().theta); // y
 
-            //controller.print(0,0, "Debug: %f", dist.get_distance());
-            pros::delay(50);
-        } });
-
+    //         //controller.print(0,0, "Debug: %f", dist.get_distance());
+    //         pros::delay(50);
+    //     } });.
     pros::screen::touch_callback(next, TOUCH_PRESSED);
 
     selector.on_select([](std::optional<rd::Selector::routine_t> routine)
@@ -83,13 +82,13 @@ void disabled()
 
 void competition_initialize()
 {
-    //selector.focus();
+    selector.focus();
 }
 
 void autonomous()
 {
-    //selector.run_auton();
-     skills();
+    selector.run_auton();
+    // skills();
     // BLE();
 }
 
