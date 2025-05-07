@@ -233,6 +233,7 @@ void BRE()
 
 void skills()
 {
+    colorsens.set_led_pwm(100);
     pros::Task([]
                {
         while(true){
@@ -259,9 +260,9 @@ void skills()
     fastintake.move_voltage(12000);
 
     chassis.turnToHeading(45, 600, {.maxSpeed = 70, .minSpeed = 10});
-    chassis.moveToPoint(0.5, 55, 1300, {.maxSpeed = 90, .minSpeed = 10});
+    chassis.moveToPoint(0, 55, 1300, {.maxSpeed = 90, .minSpeed = 10});
     chassis.turnToHeading(0, 600);
-    chassis.moveToPoint(0.5, 71, 800, {.maxSpeed = 80, .minSpeed = 10});
+    chassis.moveToPoint(0, 71, 800, {.maxSpeed = 80, .minSpeed = 10});
     chassis.waitUntil(5);
     fastintake.move_relative(-100, 600);
     arm.move_absolute(500, 200);
@@ -270,16 +271,16 @@ void skills()
 
     chassis.setPose(0, 63, chassis.getPose().theta);
     delay(50);
-    chassis.moveToPoint(1, chassis.getPose().y - 2, 500, {.forwards = false, .minSpeed = 10});
+    chassis.moveToPoint(0, chassis.getPose().y - 2, 500, {.forwards = false});
     chassis.turnToHeading(0, 300);
-    chassis.moveToPoint(1, 70, 500, {.maxSpeed = 80, .minSpeed = 10});
+    chassis.moveToPoint(0, 70, 500, {.maxSpeed = 80, .minSpeed = 10});
     arm.move_relative(20, 200);
     chassis.moveToPoint(0, chassis.getPose().y - 2, 500, {.forwards = false, .minSpeed = 10});
     chassis.turnToHeading(0, 300);
     chassis.moveToPoint(0, 70, 500, {.maxSpeed = 80, .minSpeed = 10});
     intake.move_voltage(0);
     arm.move_relative(20, 200);
-    fastintake.move_voltage(10000);
+    fastintake.move_voltage(8000);//10000
     
     chassis.moveToPoint(0, 50, 900, {.forwards = false, .minSpeed = 10});
     //fastintake.move_voltage(10000);
@@ -298,17 +299,17 @@ void skills()
     clamp.toggle();
     fastintake.move_relative(-700, 600);
 
-    chassis.moveToPoint(-48, 24, 1000, {.minSpeed = 20});
+    chassis.moveToPoint(-52, 24, 800);
     
-
-    chassis.moveToPoint(-48, -26, 2000, {.forwards = false, .maxSpeed = 100});
+    chassis.turnToHeading(0,900,{.maxSpeed=60});
+    chassis.moveToPoint(-53, -26, 1800, {.forwards = false, .maxSpeed = 100});
     chassis.waitUntilDone();
     clamp.toggle();
-    chassis.turnToHeading(0, 400);
+    chassis.turnToHeading(0, 200);
     chassis.waitUntilDone();
     delay(150);
     int x = dist.get();
-    x = x * 0.041 + 5.75;
+    x = x * 0.04095 + 5.75;
     chassis.setPose(-71.5 + x, chassis.getPose().y, chassis.getPose().theta);
     delay(50);
     //chassis.waitUntilDone();
@@ -332,14 +333,14 @@ void skills()
     chassis.setPose(0, -63, chassis.getPose().theta);
     delay(50);
 
-    chassis.moveToPoint(0, chassis.getPose().y + 2, 500, {.forwards = false, .minSpeed = 10});
+    chassis.moveToPoint(0, chassis.getPose().y + 2, 500, {.forwards = false});
     chassis.turnToHeading(180, 300);
     chassis.moveToPoint(0, -70, 500, {.maxSpeed = 80, .minSpeed = 10});
     chassis.moveToPoint(0, chassis.getPose().y + 2, 500, {.forwards = false, .minSpeed = 10});
     chassis.turnToHeading(180, 300);
     chassis.moveToPoint(0, -70, 800, {.maxSpeed = 80, .minSpeed = 10});
     arm.move_relative(20, 200);
-    fastintake.move_voltage(10000);
+    fastintake.move_voltage(8000);//10000
     intake.move_voltage(0);
     chassis.waitUntilDone();
 
@@ -364,34 +365,34 @@ void skills()
 
     delay(150);
     chassis.moveToPoint(26, -54, 1600, {.minSpeed = 20});
-    fastintake.move_voltage(7000);
+    fastintake.move_voltage(5000);
     chassis.turnToHeading(-90, 1000, {.maxSpeed = 70});
 
     chassis.waitUntilDone();
     delay(150);
     x = dist.get();
-    x = x * 0.0412 + 5.75;
+    x = x * 0.0409 + 5.75;
     chassis.setPose(chassis.getPose().x, -71.5 + x, chassis.getPose().theta);
     delay(50);
     chassis.turnToHeading(0, 800, {.maxSpeed = 60, .minSpeed = 20});
 
-    chassis.moveToPoint(24, -24, 800,{.maxSpeed=80});
+    chassis.moveToPoint(24, -25, 800,{.maxSpeed=80});
 
-    chassis.moveToPoint(32, -16, 600, {.minSpeed = 20});
-    chassis.turnToHeading(-135, 900, {.maxSpeed = 60});
+    chassis.moveToPoint(32, -18, 600, {.minSpeed = 20});
+    chassis.turnToHeading(-135, 800, {.maxSpeed = 60});
     chassis.moveToPoint(48, 1, 800, {.forwards = false, .maxSpeed = 90});
 
     chassis.waitUntilDone();
     clamp.toggle();
     delay(50);
     // chassis.swingToHeading(120,DriveSide::LEFT,900);
-    chassis.moveToPoint(70, 0, 1000, {.maxSpeed = 70, .minSpeed = 10});
+    chassis.moveToPoint(65, 0, 1000, { .minSpeed = 30});
     chassis.turnToHeading(90, 800, {.maxSpeed = 80});
 
     chassis.waitUntilDone();
     delay(50);
     chassis.setPose(63, 0, chassis.getPose().theta);
-    chassis.moveToPoint(58, 0, 800, {.forwards = false});
+    chassis.moveToPoint(56, 0, 800, {.forwards = false});
     chassis.turnToHeading(90, 300);
 
     fastintake.move_relative(-100, 600);
@@ -399,7 +400,7 @@ void skills()
     delay(700);
     chassis.moveToPoint(50, 0, 800, {.forwards = false, .minSpeed = 10});
 
-    fastintake.move_voltage(10000);
+    fastintake.move_voltage(8000);//10000
     intake.move_voltage(0);
     chassis.turnToHeading(-45, 800, {.maxSpeed = 60, .minSpeed = 10});
     arm.move_absolute(300, 200);
